@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class NetworkUI : MonoBehaviour
 {
-    private void Awake()
+    string ip = "127.0.0.1";
+
+    private void Start()
     {
-        NetworkManager.Singleton.OnClientConnectedCallback += (ulong nosequees) =>
+        NetworkManager.Singleton.OnClientConnectedCallback += (ulong clientId) =>
         {
-            Debug.Log(nosequees);
+            Debug.Log("Client connected: " + clientId);
         };
-        
     }
-    string ip = "";
+
     private void OnGUI()
     {
-        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
-        {
-        }
+        if (NetworkManager.Singleton.IsClient || NetworkManager.Singleton.IsServer)
+            return;
 
         ip = GUI.TextField(new Rect(10, 10, 200, 30), ip);
 
@@ -28,8 +28,16 @@ public class NetworkUI : MonoBehaviour
 
         if (GUI.Button(new Rect(10, 100, 100, 30), "Client"))
         {
-            NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address = ip;
-            NetworkManager.Singleton.StartClient();
+            ConnectClient();
         }
+    }
+
+    void ConnectClient()
+    {
+        var transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+
+        transport.SetConnectionData(ip, 7777);
+
+        NetworkManager.Singleton.StartClient();
     }
 }
