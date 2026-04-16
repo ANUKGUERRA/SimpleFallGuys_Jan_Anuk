@@ -480,7 +480,7 @@ MonoBehaviour:
   m_DisconnectTimeoutMS: 30000
   ConnectionData:
     Address: 127.0.0.1
-    Port: 7777
+    Port: 8001
     WebSocketPath: /
     ServerListenAddress: 0.0.0.0
     ClientBindPort: 0

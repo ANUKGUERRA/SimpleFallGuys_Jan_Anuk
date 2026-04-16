@@ -16,8 +16,8 @@ public class NetworkUI : MonoBehaviour
 
     private void OnGUI()
     {
-        //if (NetworkManager.Singleton.IsClient || NetworkManager.Singleton.IsServer)
-        //    return;
+        if (NetworkManager.Singleton.IsClient || NetworkManager.Singleton.IsServer)
+            return;
 
         ip = GUI.TextField(new Rect(10, 10, 200, 30), ip);
 
