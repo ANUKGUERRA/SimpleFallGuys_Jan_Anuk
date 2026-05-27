@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -13,12 +14,14 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
     }
     private void OnTriggerEnter(Collider other)
     {
         if(other.gameObject.tag == "powerUp")
         {
             speed += 2.0f;
+           Destroy(other.gameObject);
         }
         else if(other.gameObject.CompareTag("finishLine"))
         {
