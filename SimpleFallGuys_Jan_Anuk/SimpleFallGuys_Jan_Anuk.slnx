@@ -41,7 +41,6 @@
   <Project Path="Unity.VisualScripting.State.csproj" />
   <Project Path="Unity.AI.Navigation.Updater.csproj" />
   <Project Path="Unity.Netcode.Editor.csproj" />
-  <Project Path="Blocks.Sessions.Matchmaker.csproj" />
   <Project Path="Unity.Networking.Editor.csproj" />
   <Project Path="Unity.Services.Authentication.PlayerAccounts.Editor.csproj" />
   <Project Path="Unity.Services.Deployment.Editor.Shared.csproj" />
