@@ -7,6 +7,12 @@ using UnityEngine;
 public class AuthotitativePlayer : NetworkBehaviour
 {
     [SerializeField] private float moveSpeed = 5.0f;
+    [SerializeField] private float jumpForce = 7f;
+    [SerializeField] private float gravity = -9.81f;
+
+    private float verticalVelocity;
+    private bool isGrounded = true;
+    private Vector2 currentInput;
 
     private NetworkVariable<Vector3> serverPosition = new(readPerm: NetworkVariableReadPermission.Everyone,
         writePerm: NetworkVariableWritePermission.Server);
@@ -34,10 +40,15 @@ public class AuthotitativePlayer : NetworkBehaviour
         if (IsOwner)
         {
             inputSendTimer += Time.deltaTime;
+
             if (inputSendTimer >= inputSendInterval)
             {
-                input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-                SendInputServerRpc(input);
+                input = new Vector2(
+                    Input.GetAxis("Horizontal"),
+                    Input.GetAxis("Vertical"));
+
+                SendInputServerRpc(input, Input.GetKeyDown(KeyCode.Space));
+
                 inputSendTimer = 0;
             }
         }
@@ -63,11 +74,27 @@ public class AuthotitativePlayer : NetworkBehaviour
     }
 
     [ServerRpc]
-    private void SendInputServerRpc(Vector2 input)
+    private void SendInputServerRpc(Vector2 input, bool jump)
     {
         float deltaTime = NetworkManager.Singleton.ServerTime.FixedDeltaTime;
         Vector3 move = new Vector3(input.x, 0f, input.y) * moveSpeed * deltaTime;
+        if (jump && isGrounded)
+        {
+            verticalVelocity = jumpForce;
+            isGrounded = false;
+        }
+
+        verticalVelocity += gravity * deltaTime;
+        move.y = verticalVelocity * deltaTime;
+
         Vector3 targetPos = transform.position + move;
+
+        if (targetPos.y <= 0)
+        {
+            targetPos.y = 0;
+            verticalVelocity = 0;
+            isGrounded = true;
+        }
 
         transform.position = targetPos;
         serverPosition.Value = targetPos;
