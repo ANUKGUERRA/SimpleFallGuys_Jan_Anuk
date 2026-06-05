@@ -1,117 +1,74 @@
-using System;
-using System.Collections.Generic;
 using Unity.Netcode;
-using Unity.Netcode.Components;
 using UnityEngine;
 
-public class AuthotitativePlayer : NetworkBehaviour
+public class AuthoritativePlayer : NetworkBehaviour
 {
-    [SerializeField] private float moveSpeed = 5.0f;
-    [SerializeField] private float jumpForce = 7f;
-    [SerializeField] private float gravity = -9.81f;
 
-    private float verticalVelocity;
-    private bool isGrounded = true;
-    private Vector2 currentInput;
+    [SerializeField] float moveSpeed = 5f;
+    [SerializeField] float jumpForce = 8f;
 
-    private NetworkVariable<Vector3> serverPosition = new(readPerm: NetworkVariableReadPermission.Everyone,
-        writePerm: NetworkVariableWritePermission.Server);
+    Rigidbody rb;
+    bool jumpRequested;
+    Vector2 moveInput;
 
-    private Vector2 input;
-    private float inputSendInterval = 1f / 60f;
-    private float inputSendTimer;
-
-    private struct Snapshot
+    void Awake()
     {
-        public Vector3 pos;
-        public float time;
-
-        public Snapshot(Vector3 p, float t)
-        {
-            pos = p;
-            time = t;
-        }
+        rb = GetComponent<Rigidbody>();
     }
 
-    private Queue<Snapshot> snapshots = new();
 
-    private void Update()
+    void Update()
     {
-        if (IsOwner)
-        {
-            inputSendTimer += Time.deltaTime;
+        if (!IsOwner)
+            return;
 
-            if (inputSendTimer >= inputSendInterval)
-            {
-                input = new Vector2(
-                    Input.GetAxis("Horizontal"),
-                    Input.GetAxis("Vertical"));
+        Vector2 input = new Vector2(
+            Input.GetAxisRaw("Horizontal"),
+            Input.GetAxisRaw("Vertical")
+        );
 
-                SendInputServerRpc(input, Input.GetKeyDown(KeyCode.Space));
+        bool jump = Input.GetKeyDown(KeyCode.Space);
 
-                inputSendTimer = 0;
-            }
-        }
-
-        if (snapshots.Count >= 2)
-        {
-            Interpolate();
-        }
-    }
-
-    private void Interpolate()
-    {
-        Snapshot[] array = snapshots.ToArray();
-        Snapshot from = array[0];
-        Snapshot to = array[1];
-
-        float duration = to.time - from.time;
-        float elapsed = Time.time - from.time;
-        float t = Mathf.Clamp01(elapsed / duration);
-
-        transform.position = Vector3.Lerp(from.pos, to.pos, t);
-        if (t >= 1f) snapshots.Dequeue();
+        SendInputServerRpc(input, jump);
     }
 
     [ServerRpc]
-    private void SendInputServerRpc(Vector2 input, bool jump)
+    void SendInputServerRpc(Vector2 input, bool jump)
     {
-        float deltaTime = NetworkManager.Singleton.ServerTime.FixedDeltaTime;
-        Vector3 move = new Vector3(input.x, 0f, input.y) * moveSpeed * deltaTime;
-        if (jump && isGrounded)
-        {
-            verticalVelocity = jumpForce;
-            isGrounded = false;
-        }
+        moveInput = input;
 
-        verticalVelocity += gravity * deltaTime;
-        move.y = verticalVelocity * deltaTime;
-
-        Vector3 targetPos = transform.position + move;
-
-        if (targetPos.y <= 0)
-        {
-            targetPos.y = 0;
-            verticalVelocity = 0;
-            isGrounded = true;
-        }
-
-        transform.position = targetPos;
-        serverPosition.Value = targetPos;
+        if (jump)
+            jumpRequested = true;
     }
 
-    public override void OnNetworkSpawn()
+    void FixedUpdate()
     {
-        if (IsClient)
+        if (!IsServer)
+            return;
+
+        Vector3 move = new Vector3(moveInput.x, 0, moveInput.y) * moveSpeed * Time.fixedDeltaTime;
+        rb.MovePosition(rb.position + move);
+
+        if (jumpRequested)
         {
-            serverPosition.OnValueChanged += (oldVal, newVal) =>
+            jumpRequested = false;
+
+            if (IsGrounded())
             {
-                snapshots.Enqueue(new Snapshot(newVal, Time.time));
-                while (snapshots.Count > 5)
-                {
-                    snapshots.Dequeue();
-                }
-            };
+                rb.AddForce(
+                    Vector3.up * jumpForce,
+                    ForceMode.Impulse
+                );
+            }
         }
+    }
+    bool IsGrounded()
+    {
+        return Physics.Raycast(transform.position, -Vector3.up, 0.1f);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawLine(transform.position, -Vector3.up * .1f);
     }
 }
