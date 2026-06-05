@@ -9,6 +9,7 @@ public class AuthoritativePlayer : NetworkBehaviour
 
     [SerializeField] float distance = 5f;
     [SerializeField] float height = 2f;
+    [SerializeField] int points = 0;
 
     [SerializeField] float moveSpeed = 5f;
     [SerializeField] float jumpForce = 8f;
@@ -104,23 +105,23 @@ public class AuthoritativePlayer : NetworkBehaviour
             transform.position = GetRandomFreePosition();
         }
 
-        //if (other.gameObject.tag == "powerUp")
-        //{
-        //    speed += 2.0f;
-        //    Destroy(other.gameObject);
-        //}
-        //else if (other.gameObject.CompareTag("finishLine"))
-        //{
-        //    if (!FinishLine.alreadyArrived)
-        //    {
-        //        points += 100;
-        //        FinishLine.alreadyArrived = true;
-        //    }
-        //    else
-        //    {
-        //        points += 50;
-        //    }
-        //}
+        if (other.gameObject.tag == "powerUp")
+        {
+            moveSpeed += 2.0f;
+            Destroy(other.gameObject);
+        }
+        else if (other.gameObject.CompareTag("finishLine"))
+        {
+            if (!FinishLine.alreadyArrived)
+            {
+                points += 100;
+                FinishLine.alreadyArrived = true;
+            }
+            else
+            {
+                points += 50;
+            }
+        }
     }
     public override void OnNetworkSpawn()
     {
