@@ -1,6 +1,4 @@
 using Unity.Netcode;
-using Unity.Netcode.Transports.UTP;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -21,19 +19,5 @@ public class NetworkConnector : MonoBehaviour
     {
         if (NetworkManager.Singleton != null)
             NetworkManager.Singleton.OnServerStarted -= OnServerStarted;
-    }
-    public void Host()
-    {
-        NetworkManager.Singleton.StartHost();
-    }
-
-    public void Join()
-    {
-        NetworkManager.Singleton.StartClient();
-    }
-
-    public void Server()
-    {
-        NetworkManager.Singleton.StartServer();
     }
 }
