@@ -25,15 +25,7 @@ public class Player : MonoBehaviour
         }
         else if(other.gameObject.CompareTag("finishLine"))
         {
-            if (!FinishLine.alreadyArrived)
-            {
-                points += 100;
-                FinishLine.alreadyArrived = true;
-            }
-            else
-            {
-                points += 50;
-            }
+            return;
         }
         else if( other.gameObject.tag == "deathZone")
         {

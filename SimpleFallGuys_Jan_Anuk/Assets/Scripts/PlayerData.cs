@@ -6,4 +6,5 @@ public class PlayerData : MonoBehaviour
 {
     public NetworkVariable<FixedString32Bytes> Nickname = new();
     public NetworkVariable<int> Points = new();
+    public NetworkVariable<bool> HasFinished = new(false);
 }

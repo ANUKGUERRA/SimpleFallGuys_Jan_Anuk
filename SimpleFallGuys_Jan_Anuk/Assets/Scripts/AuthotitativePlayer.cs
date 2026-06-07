@@ -112,15 +112,8 @@ public class AuthoritativePlayer : NetworkBehaviour
         }
         else if (other.gameObject.CompareTag("finishLine"))
         {
-            if (!FinishLine.alreadyArrived)
-            {
-                points += 100;
-                FinishLine.alreadyArrived = true;
-            }
-            else
-            {
-                points += 50;
-            }
+            moveSpeed = 0;
+            jumpForce = 0;
         }
     }
     public override void OnNetworkSpawn()
