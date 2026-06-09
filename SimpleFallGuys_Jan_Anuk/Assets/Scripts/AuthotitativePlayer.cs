@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -110,6 +111,8 @@ public class AuthoritativePlayer : NetworkBehaviour
             {
                 GameManager.Instance.loseText.gameObject.SetActive(true);
             }
+
+            StartCoroutine(ReturnToMenu());
         }
 
         if (!IsServer) return;
@@ -124,6 +127,14 @@ public class AuthoritativePlayer : NetworkBehaviour
             Destroy(other.gameObject);
         }
     }
+    private IEnumerator ReturnToMenu()
+    {
+        yield return new WaitForSeconds(3f);
+
+        NetworkManager.Singleton.Shutdown();
+        SceneManager.LoadScene("ConnectMenu");
+    }
+
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
