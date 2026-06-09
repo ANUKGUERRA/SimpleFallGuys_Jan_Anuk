@@ -1,3 +1,4 @@
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -99,6 +100,18 @@ public class AuthoritativePlayer : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.CompareTag("finishLine"))
+        {
+            if (IsOwner)
+            {
+                GameManager.Instance.winText.gameObject.SetActive(true);
+            }
+            else
+            {
+                GameManager.Instance.loseText.gameObject.SetActive(true);
+            }
+        }
+
         if (!IsServer) return;
         if (other.gameObject.tag == "deathZone")
         {
@@ -109,14 +122,6 @@ public class AuthoritativePlayer : NetworkBehaviour
         {
             moveSpeed += 2.0f;
             Destroy(other.gameObject);
-        }
-        else if (other.gameObject.CompareTag("finishLine"))
-        {
-            moveSpeed = 0;
-            jumpForce = 0;
-            GetComponent<PlayerData>().HasFinished.Value = true;
-
-            FindFirstObjectByType<GameManager>().CheckRoundEnd();
         }
     }
     public override void OnNetworkSpawn()

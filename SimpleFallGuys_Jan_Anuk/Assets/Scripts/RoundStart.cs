@@ -7,8 +7,8 @@ using UnityEngine.UI;
 
 public class RoundStart : NetworkBehaviour
 {
+    [SerializeField] GameObject wall;
     [SerializeField] Button startButton;
-    [SerializeField] private GameManager gameManager;
     private Dictionary<ulong, bool> readyPlayers = new();
 
     private bool gameStarted = false;
@@ -76,8 +76,7 @@ public class RoundStart : NetworkBehaviour
     private void StartGameClientRpc()
     {
         Debug.Log("La partida ha començat");
-
-        gameManager.StartRound();
+        wall.SetActive(false);
     }
 }
 

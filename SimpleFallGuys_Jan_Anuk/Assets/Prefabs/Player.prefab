@@ -259,6 +259,7 @@ MonoBehaviour:
     m_Extent: {x: 3, y: 0, z: 3}
   distance: 5
   height: 2
+  points: 0
   moveSpeed: 5
   jumpForce: 6
   rotationSpeed: 180
