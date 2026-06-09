@@ -114,6 +114,9 @@ public class AuthoritativePlayer : NetworkBehaviour
         {
             moveSpeed = 0;
             jumpForce = 0;
+            GetComponent<PlayerData>().HasFinished.Value = true;
+
+            FindFirstObjectByType<GameManager>().CheckRoundEnd();
         }
     }
     public override void OnNetworkSpawn()

@@ -71,7 +71,7 @@ public class GameManager : NetworkBehaviour
         CheckRoundEnd();
     }
 
-    private void CheckRoundEnd()
+    public void CheckRoundEnd()
     {
         bool allFinished = players.All(p => p.HasFinished.Value);
 
@@ -95,8 +95,10 @@ public class GameManager : NetworkBehaviour
         {
             player.HasFinished.Value = false;
 
-            // Aquí puedes moverlos al spawn de la siguiente ronda
-            // player.transform.position = spawnPoint.position;
+            if (IsServer)
+            {
+                player.transform.position = player.InitialPosition;
+            }
         }
 
         UpdateRoundText();
