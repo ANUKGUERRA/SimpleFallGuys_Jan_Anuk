@@ -11,9 +11,6 @@ public class PlayerData : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (IsServer)
-        {
             InitialPosition = transform.position;
-        }
     }
 }
