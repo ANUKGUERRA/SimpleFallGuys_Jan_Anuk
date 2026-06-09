@@ -11,8 +11,8 @@ public class AuthoritativePlayer : NetworkBehaviour
     [SerializeField] float height = 2f;
     [SerializeField] int points = 0;
 
-    [SerializeField] float moveSpeed = 5f;
-    [SerializeField] float jumpForce = 8f;
+    [SerializeField] public float moveSpeed = 5f;
+    [SerializeField] public float jumpForce = 8f;
     [SerializeField] float rotationSpeed = 180f;
 
     [SerializeField] GameObject shape;

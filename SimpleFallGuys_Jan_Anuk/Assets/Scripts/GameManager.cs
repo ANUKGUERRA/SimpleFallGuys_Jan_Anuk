@@ -7,7 +7,7 @@ using UnityEngine;
 public class GameManager : NetworkBehaviour
 {
     private PlayerData[] players;
-
+    private AuthoritativePlayer authPlayer;
     [SerializeField] private TMP_Text[] leaderboardTexts;
     [SerializeField] private TMP_Text roundText;
     [SerializeField] GameObject wall;
@@ -96,11 +96,9 @@ public class GameManager : NetworkBehaviour
         foreach (var player in players)
         {
             player.HasFinished.Value = false;
-
-            if (IsServer)
-            {
-                player.transform.position = player.InitialPosition;
-            }
+            authPlayer.moveSpeed = 5f;
+            authPlayer.jumpForce = 8f;
+            player.transform.position = player.InitialPosition;
         }
 
         UpdateRoundText();
