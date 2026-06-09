@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using TMPro;
 using Unity.Netcode;
@@ -9,6 +10,7 @@ public class GameManager : NetworkBehaviour
 
     [SerializeField] private TMP_Text[] leaderboardTexts;
     [SerializeField] private TMP_Text roundText;
+    [SerializeField] GameObject wall;
 
     private int currentRound = 1;
 
@@ -110,5 +112,11 @@ public class GameManager : NetworkBehaviour
         {
             roundText.text = $"Round {currentRound}";
         }
+    }
+
+    internal void StartRound()
+    {
+        wall.SetActive(false);
+        Debug.Log("Round starting");
     }
 }
