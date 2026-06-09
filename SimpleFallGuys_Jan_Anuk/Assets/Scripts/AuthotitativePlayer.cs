@@ -34,7 +34,7 @@ public class AuthoritativePlayer : NetworkBehaviour
         if (!IsOwner)
             return;
 
-        Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
